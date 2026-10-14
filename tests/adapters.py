@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import os
 from typing import Any
-
+from resiliparse.parse.html import HTMLTree
+from resiliparse.extract import html2text
 
 
 def run_extract_text_from_html_bytes(html_bytes: bytes) -> str | None:
-    raise NotImplementedError
+    html_tree = HTMLTree.parse_from_bytes(html_bytes, encoding="utf-8")
+    return html2text.extract_plain_text(html_tree)
 
 
 def run_identify_language(text: str) -> tuple[Any, float]:
