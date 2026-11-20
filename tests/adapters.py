@@ -20,16 +20,21 @@ identification model lid.176.bin from https://fasttext.cc/docs/en/language-ident
 available at /shared-data/classifiers/lid.176.bin.
 English (“en”) and Chinese (“zh”)
     """
-    raise NotImplementedError
+    import torch
 
+    model = torch.load("lid.176.bin", map_location=torch.device("cpu"))
+    model.eval()
+    result = model(text)
+    raise result
 
 def run_mask_emails(text: str) -> tuple[str, int]:
     import re
     MASK = '|||EMAIL_ADDRESS|||'
-    pattern = r'@'
+    pattern = r"\b\w+@\w+\.\w+"
     match = re.findall(pattern, text)
-
-
+    for email in match:
+        text = text.replace(email, MASK)
+    return (text, len(match))
 
 
 def run_mask_phone_numbers(text: str) -> tuple[str, int]:

@@ -11,7 +11,7 @@ dependencies = [
     "wandb>=0.19.7",
     "pytest>=8.3.5",
     "xopen>=2.0.2",
-    "resiliparse>=0.15.2",
+    "resiliparse==1.0.9",
     "fasttext>=0.9.3",
     "mmh3>=5.1.0",
     "nltk>=3.9.1",
