@@ -22,7 +22,7 @@ English (“en”) and Chinese (“zh”)
     """
     import torch
 
-    model = torch.load("lid.176.bin", map_location=torch.device("cpu"))
+    model = torch.load("/models/lid.176.bin", map_location=torch.device("cpu"))
     model.eval()
     result = model(text)
     raise result
@@ -32,16 +32,35 @@ def run_mask_emails(text: str) -> tuple[str, int]:
     MASK = '|||EMAIL_ADDRESS|||'
     pattern = r"\b\w+@\w+\.\w+"
     match = re.findall(pattern, text)
+    print(match)
     for email in match:
-        text = text.replace(email, MASK)
+        left_edge = text.index(email)
+        right_edge = left_edge + len(email)
+        text = text[:left_edge] + MASK + text[right_edge:]
     return (text, len(match))
 
 
 def run_mask_phone_numbers(text: str) -> tuple[str, int]:
-    import re
+    print(f"original {text}")
     MASK = '|||PHONE_NUMBER|||'
-    pattern = r'-'
+    count = 0
+    char_set = set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')', ' ', '-'])
+    for idx in range(0, len(text)):
+        if idx < len(text) and text[idx] in char_set and text[idx] != ' ' and text[idx] != '-':
+            left = idx
+            right = idx
+            while right < len(text):
+                if text[right] in char_set:
+                    right += 1
+                else:
+                    break
+            if text[right - 1] == ' ':
+                right -= 1
+            text = text[:left] + MASK + text[right:]
+            count += 1
 
+    print(f"modified{text}")
+    return (text, count)
 
 
 def run_mask_ips(text: str) -> tuple[str, int]:
